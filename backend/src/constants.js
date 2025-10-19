@@ -1,1 +1,1 @@
-export const DB_NAME="Campus_Resources_Sharing"
+export const DB_NAME="CampusFlow"
