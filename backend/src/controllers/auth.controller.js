@@ -3,6 +3,7 @@ import { asyncHandler } from "../utils/asyncHandler.js";
 import { ApiError } from "../utils/ApiError.js";
 import { ApiResponse } from "../utils/ApiResponse.js";
 import jwt from "jsonwebtoken"
+import { uploadOnCloudinary } from "../utils/cloudinary.js";
 const generateAccessAndRefreshToken = async(userId)=>{
     try {
         const user = await User.findById(userId)
@@ -56,6 +57,14 @@ const registerUser =asyncHandler(async (req,res)=>{
 
     // if user not exist we will create the user 
 
+
+    // handle avatar image 
+    let avatarUrl=null;
+    if(req.file){
+        const uploaded= await uploadOnCloudinary(req.file.path);
+        avatarUrl = uploaded?.secure_url || null;
+    }
+
     const user = await User.create(
         {
             username:username.toLowerCase(),
@@ -63,7 +72,9 @@ const registerUser =asyncHandler(async (req,res)=>{
             password,
             branch,
             year,
-            role
+            role,
+            avatar:avatarUrl
+
         }
     )
        //removing password and refreshToken from reponse to 

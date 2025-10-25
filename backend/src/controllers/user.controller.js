@@ -1,7 +1,9 @@
 import { asyncHandler } from "../utils/asyncHandler.js";
 import { ApiError } from "../utils/ApiError.js";
 import { ApiResponse } from "../utils/ApiResponse.js";
-import {User} from "../models/user.model.js"
+import { User } from "../models/user.model.js";
+import fs from "fs";
+import { uploadOnCloudinary } from "../utils/cloudinary.js";
 
 
 // get profile 
@@ -38,7 +40,49 @@ const updateUserProfile=asyncHandler (async(req,res)=>{
     )
 })
 
-const 
+
+// upload profile picture
+const uploadProfilePicture =asyncHandler(async(req,res)=>{
+    let profileUrl;
+
+    if(req.file){
+       const uploadResult =await uploadOnCloudinary(req.file.path);
+
+       // user uploaded file → upload to cloudinary
+       if(uploadResult){
+        profileUrl=uploadResult.secure_url;
+       }
+
+       // remove temp file
+       if(fs.existsSync(req.file.path)){
+           fs.unlinkSync(req.file.path);
+       }
+
+    }
+
+        // only update avatar if a new one was uploaded
+        const updateData = {};
+        if (profileUrl) updateData.avatar = profileUrl;
 
 
-export {getUserProfile,updateUserProfile}
+
+    const user = await User.findByIdAndUpdate(
+       req.user._id,
+        updateData ,
+       { new: true }
+    );
+
+
+    return res.status(200).json(
+        new ApiResponse(200,user,"User profile updated successfully")
+    )
+
+
+})
+
+
+export {
+    getUserProfile,
+    updateUserProfile,
+    uploadProfilePicture
+}

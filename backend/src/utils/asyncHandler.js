@@ -3,8 +3,14 @@ const asyncHandler = (func) => async (req, res, next) => {
     // Run the async function
     await func(req, res, next);
   } catch (error) {
+  
+     console.error("Async error caught:", error); // helpful log
+
+         const status = typeof error.statusCode === "number" && error.statusCode >= 100 && error.statusCode < 600
+      ? error.statusCode
+      : 500;
     // Send custom error response
-    res.status(error.code || 500).json({
+    res.status(status).json({
       success: false,
       message: error.message
     });

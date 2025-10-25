@@ -3,18 +3,19 @@ import mongoose,{Schema, Types} from 'mongoose'
 import bcrypt from "bcrypt"
 const userSchema=new Schema(
     {
-        name:String,
+        username:{type:String,required:true},
         email:{type:String,unique:true},
         password:String,
         branch:String,
         year:Number,
         role:{type:String,enum:["student","faculty","alumni","admin"],default:"student"},
+        avatar: { type: String }, // ✅ to store Cloudinary image URL
         uploadedResources: [{ type: mongoose.Schema.Types.ObjectId, ref: "Resource" }],
         upvotedResources: [{ type: mongoose.Schema.Types.ObjectId, ref: "Resource" }],
         refreshToken:{type:String}
 
-    },{timestamps}
-)
+    },{timestamps:true}
+) 
 
 // hash the password before store using bycrpt
 

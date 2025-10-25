@@ -3,9 +3,9 @@ import { ApiResponse } from "../utils/ApiResponse.js";
 import { asyncHandler } from "../utils/asyncHandler.js";
 import jwt from "jsonwebtoken";
 
-import { User } from "../models/user.model.js";
+import { User } from "../models/"; 
 
-const verifiyjwt =asyncHandler(async(req,res,next)=>{
+ const verifiyjwt =asyncHandler(async(req,res,next)=>{
   try {
 
         // get the tooken from the cookies which we send  or from header 
@@ -36,3 +36,6 @@ const verifiyjwt =asyncHandler(async(req,res,next)=>{
         throw new ApiError(401,"Unauthorized request")
     }
 })
+
+
+export {verifiyjwt}
